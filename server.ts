@@ -1,8 +1,9 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { GoogleGenAI } from '@google/genai';
+import { spawn } from 'child_process';
 
 dotenv.config();
 
@@ -11,88 +12,49 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const PYTHON_PORT = process.env.PYTHON_PORT || 8000;
 
 app.use(express.json());
 
-// Initialize Gemini Client
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY || '',
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
-    },
-  },
+// Spawn Python FastAPI Server in background
+const venvPython = path.resolve(__dirname, 'venv/bin/python');
+const pythonCmd = fs.existsSync(venvPython) ? venvPython : 'python3';
+
+console.log(`Starting Python FastAPI ODE Engine using ${pythonCmd}...`);
+const pyBackend = spawn(
+  pythonCmd,
+  ['-m', 'uvicorn', 'backend.main:app', '--port', String(PYTHON_PORT), '--host', '127.0.0.1'],
+  {
+    cwd: __dirname,
+    stdio: 'inherit',
+    env: { ...process.env, PYTHONPATH: __dirname },
+  }
+);
+
+pyBackend.on('error', (err) => {
+  console.error('Failed to start Python backend subprocess:', err);
 });
 
-// API endpoint for AI Scenario Explainer
-app.post('/api/gemini/explain', async (req, res) => {
+// Proxy /api/* requests to Python FastAPI Backend
+app.use('/api', async (req, res) => {
+  const targetUrl = `http://127.0.0.1:${PYTHON_PORT}/api${req.url}`;
   try {
-    const {
-      produceType,
-      initialQty,
-      durationHours,
-      storageCondition,
-      scenarioName,
-      spoilageRate,
-      remainingQty,
-      lostQty,
-      percentageLoss,
-      halfLifeHours,
-      estimatedLossPGK,
-      equilibriumQty,
-      incomingSupplyRate,
-    } = req.body;
+    const fetchOptions: RequestInit = {
+      method: req.method,
+      headers: { 'Content-Type': 'application/json' },
+    };
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      return res.status(503).json({
-        error: 'Gemini API key is not configured in environment.',
-      });
+    if (['POST', 'PUT', 'PATCH'].includes(req.method) && req.body) {
+      fetchOptions.body = JSON.stringify(req.body);
     }
 
-    const prompt = `You are an expert agricultural economist and applied mathematician writing for "FreshFlow PNG", an exploratory first-order differential equations simulation tool for Papua New Guinea supply chains.
-
-    Here are the simulation results calculated by the deterministic ODE solver:
-    - Produce Type: ${produceType}
-    - Scenario: ${scenarioName}
-    - Initial Quantity (Q0): ${initialQty} kg
-    - Transport Duration (t): ${durationHours} hours
-    - Storage Condition: ${storageCondition}
-    - Spoilage Rate (k): ${spoilageRate} hr⁻¹
-    - Incoming Supply Rate (S): ${incomingSupplyRate ? incomingSupplyRate + ' kg/hr' : 'N/A'}
-    - Equilibrium Quantity (Q* = S/k): ${equilibriumQty ? equilibriumQty.toFixed(1) + ' kg' : 'N/A'}
-    - Remaining Usable Produce: ${remainingQty.toFixed(1)} kg (${(100 - percentageLoss).toFixed(1)}%)
-    - Estimated Produce Lost: ${lostQty.toFixed(1)} kg (${percentageLoss.toFixed(1)}% loss)
-    - Calculated Produce Half-life (t_1/2): ${halfLifeHours ? halfLifeHours.toFixed(1) + ' hours' : 'N/A'}
-    - Estimated Financial Loss: ${estimatedLossPGK ? 'K' + estimatedLossPGK.toLocaleString() + ' PGK' : 'N/A'}
-
-    Please provide a concise, high-level narrative (3 paragraphs max) interpreting these mathematical results in the context of Papua New Guinea logistics (e.g., Highlands Highway transport, transit delays, ambient temperature vs cold chain storage).
-
-    STRICT RULES:
-    1. Do NOT invent new numbers or change any calculated math values. Use ONLY the figures given above.
-    2. Clearly reference that these are "simulated model estimates based on dQ/dt = -kQ".
-    3. Highlight practical logistics recommendations (e.g. storage improvement vs route speed optimization).
-    4. Keep tone professional, educational, encouraging, and clear.`;
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.8-flash',
-      contents: prompt,
-      config: {
-        systemInstruction:
-          'You are an AI Scenario Explainer for FreshFlow PNG. Explain mathematical ODE model outputs in clear, structured, accessible language.',
-      },
-    });
-
-    const explanationText = response.text || 'No explanation generated.';
-
-    return res.json({
-      explanation: explanationText,
-      timestamp: new Date().toISOString(),
-    });
+    const pyRes = await fetch(targetUrl, fetchOptions);
+    const data = await pyRes.json();
+    res.status(pyRes.status).json(data);
   } catch (err: any) {
-    console.error('Error generating AI scenario explanation:', err);
-    return res.status(500).json({
-      error: err.message || 'Failed to generate AI scenario explanation.',
+    console.error(`Error proxying to Python backend (${targetUrl}):`, err.message);
+    res.status(503).json({
+      error: 'Python FastAPI backend initializing or unavailable. Please retry in a moment.',
     });
   }
 });
@@ -128,7 +90,7 @@ async function startServer() {
   }
 
   app.listen(PORT, () => {
-    console.log(`FreshFlow PNG Server running on http://localhost:${PORT}`);
+    console.log(`FreshFlow PNG App running on http://localhost:${PORT}`);
   });
 }
 

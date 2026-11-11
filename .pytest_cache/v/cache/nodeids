@@ -1,0 +1,14 @@
+[
+  "backend/tests/test_api.py::test_health_endpoint",
+  "backend/tests/test_api.py::test_invalid_input_validation",
+  "backend/tests/test_api.py::test_simulate_deterioration_endpoint",
+  "backend/tests/test_api.py::test_simulate_supply_endpoint",
+  "backend/tests/test_models.py::test_analytical_deterioration_decay",
+  "backend/tests/test_models.py::test_deterioration_invalid_inputs",
+  "backend/tests/test_models.py::test_half_life",
+  "backend/tests/test_models.py::test_supply_model_equilibrium",
+  "backend/tests/test_models.py::test_supply_model_k_zero_edge_case",
+  "backend/tests/test_solvers.py::test_rk4_accuracy_against_analytical",
+  "backend/tests/test_solvers.py::test_rk4_step_size_convergence",
+  "backend/tests/test_solvers.py::test_scipy_solve_ivp_comparison"
+]

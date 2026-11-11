@@ -1,46 +1,28 @@
-# FreshFlow PNG
+# FreshFlow PNG V2
 
-### Understanding how time and delays can affect fresh produce
+### Python FastAPI Engine & Interactive ODE Simulation for Produce Logistics
 
-FreshFlow PNG is a mini Applied Mathematics and interactive simulation project. The project explores how the quantity and quality of usable fresh produce decreases over time during transportation and storage, inspired by real-world supply chain challenges in Papua New Guinea.
+FreshFlow PNG V2 is an Applied Mathematics, Python numerical engineering, and interactive web application that models how the quantity of usable fresh produce changes over time during transport and storage.
 
-This application is designed as an **educational mathematical simulation**. It uses first-order differential equations to demonstrate rate dynamics and supply deterioration in a clear, interactive way.
+Inspired by agricultural supply chain corridors in Papua New Guinea (such as the Highlands Highway from Mount Hagen to Lae Port), the project uses first-order ordinary differential equations (ODEs) to simulate rate-based deterioration and continuous market supply dynamics.
+
+V2 upgrades the mathematical engine from TypeScript into a **Python FastAPI backend** powered by **NumPy** and **SciPy**, featuring analytical solvers, custom 4th-Order Runge-Kutta (RK4) numerical solvers, SciPy `solve_ivp` numerical integration, error metric evaluation, and an optional Gemini AI explanation layer.
 
 ---
 
 ## The Problem
 
-Fresh agricultural produce does not stay fresh forever. In Papua New Guinea, produce often travels long distances from farm gates in the Highlands to urban markets and coastal ports. Transportation delays, road disruptions, and hot or unchilled storage conditions can cause produce to spoil quickly before reaching consumers.
+Fresh agricultural produce deteriorates continuously post-harvest. In Papua New Guinea, produce travels long distances across rugged mountain passes and unpaved roads. Transport delays, vehicle breakdowns, and ambient heat in unchilled storage accelerate physical and enzymatic degradation.
 
 ---
 
-## The Main Question
+## Project Objectives
 
-> What happens to the amount of usable fresh produce when transport time increases or conditions change?
-
-FreshFlow PNG allows users to test different travel durations, produce types, and storage conditions to observe how rate equations predict deterioration.
-
----
-
-## How It Works
-
-The workflow of the application is straightforward:
-
-```text
-User chooses conditions (Produce, Time, Storage)
-        │
-        ▼
-Mathematical model receives inputs (Q₀, k, S)
-        │
-        ▼
-Simulation engine solves differential equations
-        │
-        ▼
-Results and decay curves are displayed visually
-        │
-        ▼
-User compares scenarios and reviews mathematical insights
-```
+1. Demonstrate how first-order differential equations model real-world continuous deterioration processes.
+2. Provide an authoritative Python mathematical backend using FastAPI, NumPy, and SciPy.
+3. Compare exact analytical ODE solutions against custom RK4 numerical algorithms and SciPy numerical solvers.
+4. Maintain a clean, human-centered React frontend connected seamlessly to Python API endpoints.
+5. Offer an optional AI explanation layer using Gemini to convert backend numerical results into plain-English agricultural insights.
 
 ---
 
@@ -48,138 +30,122 @@ User compares scenarios and reviews mathematical insights
 
 ### Model 1: Basic Deterioration Model
 
-The core equation used in the simulation is the first-order autonomous differential equation:
+The core model uses the autonomous first-order differential equation:
 
-$$\frac{dQ}{dt} = -kQ$$
+$$\frac{dQ}{dt} = -k Q$$
 
 Where:
-- **Q** represents the amount of usable produce (in kg).
-- **t** represents time (in hours).
-- **k** represents the deterioration or spoilage rate parameter ($hr^{-1}$).
-
-This equation states that the rate at which produce deteriorates is proportional to the amount of usable produce remaining at any given time.
+- **Q** represents the remaining quantity of usable produce (in kg).
+- **t** represents elapsed transport time (in hours).
+- **k** represents the effective deterioration rate parameter ($hr^{-1}$).
 
 #### Analytical Solution
 
-By separating variables and integrating with respect to initial quantity $Q(0) = Q_0$:
+Solving by separation of variables with initial condition $Q(0) = Q_0$:
 
 $$Q(t) = Q_0 e^{-kt}$$
 
-This equation calculates the exact amount of usable produce remaining after $t$ hours.
+The produce half-life is calculated as $t_{1/2} = \frac{\ln(2)}{k}$.
 
 ---
 
 ### Model 2: Supply and Deterioration Model
 
-The project also explores a model where new produce arrives at a continuous supply rate $S$ while existing produce deteriorates:
+When new produce arrives at a continuous supply rate $S$ while existing produce deteriorates:
 
-$$\frac{dQ}{dt} = S - kQ$$
+$$\frac{dQ}{dt} = S - k Q$$
 
 Where:
-- **S** represents incoming produce entering the system (in kg/hr).
-- **kQ** represents produce lost to spoilage over time.
+- **S** represents incoming produce supply rate (in kg/hr).
+- **kQ** represents produce loss rate (in kg/hr).
 
-#### Equilibrium
+#### Analytical Solution
 
-When the incoming supply rate equals the deterioration loss rate ($\frac{dQ}{dt} = 0$), the system reaches an equilibrium quantity $Q^*$:
+For $k > 0$:
+
+$$Q(t) = \frac{S}{k} + \left(Q_0 - \frac{S}{k}\right) e^{-kt}$$
+
+For $k = 0$ (no spoilage):
+
+$$Q(t) = Q_0 + S t$$
+
+#### Equilibrium State
+
+As $t \to \infty$, the system converges exponentially to a stable equilibrium $Q^*$:
 
 $$Q^* = \frac{S}{k}$$
 
-At this equilibrium point, incoming supply matches the rate of loss.
+At equilibrium, incoming supply matches spoilage loss ($\frac{dQ}{dt} = 0$).
 
 ---
 
-## AM224 Connection
+## Connection to AM224 (Ordinary Differential Equations)
 
-This project applies core topics from **AM224: Ordinary Differential Equations**:
-
-- **First-order differential equations:** The model tracks how crop quantity changes continuously with respect to a single independent variable (time).
-- **Separable equations:** The basic deterioration model $\frac{dQ}{dt} = -kQ$ is solved by separating variables ($\frac{1}{Q}dQ = -k dt$) and integrating.
-- **Autonomous equations:** The basic rate equation $\frac{dQ}{dt} = -kQ$ depends directly on the current quantity $Q$ rather than explicitly on time $t$.
-- **Initial value problems:** Each simulation starts with a known initial condition $Q(0) = Q_0$ at the farm gate.
-- **First-order linear equations:** The supply model $\frac{dQ}{dt} + kQ = S$ is a first-order linear ODE solved using the integrating factor $I(t) = e^{kt}$.
-- **Equilibrium analysis:** The supply model contains a stable steady-state equilibrium $Q^* = \frac{S}{k}$.
-- **Rate modelling:** Differential equations are used to represent physical rate dynamics in post-harvest logistics.
+- **First-Order Differential Equations:** Tracks continuous rate of change of produce quantity over time.
+- **Separable Equations:** $\frac{dQ}{dt} = -kQ \implies \frac{1}{Q}dQ = -k dt$.
+- **Autonomous Systems:** $\frac{dQ}{dt} = -kQ$ depends directly on current state $Q$ rather than time $t$.
+- **Initial Value Problems (IVPs):** Solved subject to initial harvested quantity $Q(0) = Q_0$.
+- **First-Order Linear ODEs:** $\frac{dQ}{dt} + kQ = S$ solved using the Integrating Factor $I(t) = e^{kt}$.
+- **Equilibrium Analysis:** Identification and steady-state stability evaluation of $Q^* = \frac{S}{k}$.
 
 ---
 
-## User Inputs
+## Numerical Methods & Solvers
 
-Users can adjust several parameters in the simulation control panel:
+FreshFlow PNG V2 implements three distinct mathematical solving strategies in Python:
 
-- **Produce type:** Choose from Tomatoes, Bananas, Kaukau (Sweet Potato), Leafy Greens, or Custom Produce.
-- **Starting amount ($Q_0$):** Set the initial harvested batch size (e.g. 1,000 kg).
-- **Travel time ($t$):** Adjust the travel duration from 2 to 72 hours using a slider.
-- **Storage conditions:** Select *Poor* (faster deterioration), *Normal* (standard example condition), or *Better storage* (slower deterioration).
-- **Journey scenario:** Pick quick scenario presets (*Normal journey*, *Delayed journey*, *Long delay*).
-- **Deterioration rate ($k$):** Adjust the rate parameter directly for mathematical exploration.
+1. **Analytical Exact Solvers:** Closed-form mathematical equations ($Q_0 e^{-kt}$).
+2. **Custom 4th-Order Runge-Kutta (RK4):**
+   Explicit step integration using intermediate slope evaluations:
+   $$k_1 = f(t_n, Q_n)$$
+   $$k_2 = f(t_n + \frac{h}{2}, Q_n + \frac{h}{2}k_1)$$
+   $$k_3 = f(t_n + \frac{h}{2}, Q_n + \frac{h}{2}k_2)$$
+   $$k_4 = f(t_n + h, Q_n + hk_3)$$
+   $$Q_{n+1} = Q_n + \frac{h}{6}(k_1 + 2k_2 + 2k_3 + k_4)$$
+3. **SciPy `solve_ivp`:** Adaptive explicit RK45 solver from `scipy.integrate`.
 
----
-
-## Scenarios
-
-The simulation includes four illustrative scenarios:
-
-- **Normal journey:** Standard transit duration under typical road conditions.
-- **Delayed journey:** A longer journey representing moderate transport delays.
-- **Long delay:** A multi-day journey representing major road disruptions or breakdowns.
-- **Better storage:** The same travel duration as a delay, but using cool or shaded storage to reduce the deterioration rate.
+The Python backend computes maximum absolute error ($\max |Q_{numerical} - Q_{analytical}|$) and mean absolute error across all time points to quantify numerical approximation accuracy.
 
 ---
 
-## Results
+## Python Backend Architecture
 
-When a simulation is run, the application calculates and displays:
+Built using **FastAPI**, **NumPy**, **SciPy**, and **Pydantic**:
 
-- **Starting amount:** Initial harvest quantity ($Q_0$).
-- **Estimated amount remaining:** Usable produce left at destination ($Q(t)$).
-- **Estimated amount lost:** Total produce spoiled during travel ($Q_0 - Q(t)$).
-- **Percentage lost:** Percentage loss ratio.
-- **Interactive decay graph:** A visual curve showing quantity decreasing over time.
-- **Scenario comparison:** A multi-trace chart comparing curves for different transport conditions side by side.
+- `POST /api/simulate/deterioration`: Accepts initial quantity, deterioration rate, duration, and step size $h$. Returns analytical, RK4, and SciPy time series plus numerical error metrics.
+- `POST /api/simulate/supply`: Accepts initial quantity, supply rate, deterioration rate, duration, and step size. Returns supply trajectory and equilibrium quantity $Q^*$.
+- `POST /api/gemini/explain`: Accepts numerical backend outputs and invokes Gemini API to generate plain-English narrative interpretations.
+- `GET /api/health`: Health status check.
 
 ---
 
-## Features
+## Frontend Integration
 
-- Interactive simulation controls and scenario presets
-- Mathematical modelling using first-order differential equations
-- Exact analytical solutions and step-by-step numerical solvers
-- Interactive charts for decay curves and scenario comparisons
-- Simple human-language observations generated from simulation outputs
-- Expandable mathematical explanation section with rendered LaTeX notation
-- Optional AI explanation layer to summarize results in plain English
+The frontend is built with **React**, **TypeScript**, **Vite**, **Recharts**, and **KaTeX**:
+
+- Communicates with Python FastAPI endpoints via REST API calls.
+- Displays multi-trace visualizations comparing Analytical Exact, Custom RK4, and SciPy `solve_ivp` curves.
+- Includes fallback execution if the backend server is initializing.
 
 ---
 
-## Numerical Simulation
+## AI Explanation Feature
 
-In addition to exact analytical solutions, the project uses a 4th-order Runge-Kutta (RK4) numerical method to solve the differential equations step by step.
-
-This allows the application to:
-1. Simulate time-series data iteratively.
-2. Compare the numerical approximation directly against the exact mathematical solution to confirm solver accuracy.
+- **Python calculates; Gemini explains.**
+- The Gemini API receives actual numerical simulation results generated by the Python backend.
+- The AI does not compute mathematics, invent numbers, or alter calculated values.
 
 ---
 
-## AI Explanation Layer
+## Technology Stack
 
-The application includes an optional **"Explain this result"** feature powered by Gemini.
-
-- **Role of AI:** The AI only converts the calculated simulation numbers into a short plain-English narrative.
-- **Truth Source:** The mathematical engine and numerical solver calculate all numbers. The AI does not compute math, alter results, or invent data.
-
-> AI explains the results. It does not replace the mathematical model.
-
----
-
-## Technology Used
-
-- **TypeScript & React (Vite):** User interface and interactive controls.
-- **Express (Node.js):** Server entry point and Gemini API proxy route.
-- **Recharts:** Responsive interactive chart rendering.
-- **KaTeX:** Clean mathematical formula rendering.
-- **@google/genai:** Server-side Gemini integration for natural language explanation.
+- **Python 3.11**
+- **FastAPI / Uvicorn**
+- **NumPy & SciPy**
+- **pytest & httpx**
+- **TypeScript & React (Vite)**
+- **Recharts & KaTeX**
+- **@google/genai & google-genai**
 
 ---
 
@@ -187,90 +153,108 @@ The application includes an optional **"Explain this result"** feature powered b
 
 ```text
 FreshFlow-PNG/
-├── server.ts                 # Express server & Gemini API proxy
+├── server.ts                       # Express dev proxy & Python subprocess launcher
+├── backend/
+│   ├── main.py                     # FastAPI entry point & REST endpoints
+│   ├── requirements.txt            # Python backend dependencies
+│   ├── models/
+│   │   ├── deterioration.py       # Basic ODE dQ/dt = -kQ
+│   │   └── supply_model.py        # Linear ODE dQ/dt = S - kQ & k=0 handler
+│   ├── solvers/
+│   │   ├── analytical.py          # Exact solution evaluator
+│   │   └── numerical.py           # Custom RK4 solver & SciPy solve_ivp wrapper
+│   ├── services/
+│   │   ├── simulation.py          # Simulation orchestration & error metrics
+│   │   └── ai_explanation.py      # Gemini API integration service
+│   ├── schemas/
+│   │   └── simulation.py          # Pydantic request/response schemas
+│   └── tests/
+│       ├── test_models.py         # Analytical model tests
+│       ├── test_solvers.py        # Custom RK4 & step-size convergence tests
+│       └── test_api.py            # FastAPI REST endpoint tests
 ├── src/
-│   ├── App.tsx               # Main application layout
-│   ├── main.tsx              # React entry point
-│   ├── index.css             # Global styles and KaTeX imports
-│   ├── math_engine/
-│   │   ├── types.ts          # TypeScript interfaces
-│   │   ├── produceData.ts    # Produce parameters & baseline rates
-│   │   ├── scenarios.ts      # Scenario presets
-│   │   ├── odeModels.ts      # Analytical & RK4 numerical ODE solvers
-│   │   └── insightsEngine.ts # Rule-based insight generator
-│   └── components/
-│       ├── TopBar.tsx                 # Header navigation
-│       ├── HeroSection.tsx            # Hero banner & plain English explanation
-│       ├── SimpleQuestion.tsx         # Simple Farm -> Transport -> Market flow
-│       ├── SimulationControls.tsx     # Input form and sliders
-│       ├── ResultsDashboard.tsx       # KPI metrics summary
-│       ├── MainGraph.tsx              # Single interactive decay chart
-│       ├── ScenarioComparison.tsx     # Multi-scenario comparison chart
-│       ├── ModelSuggestions.tsx       # Plain-language observations
-│       ├── MathExplanation.tsx        # Expandable AM224 math breakdown
-│       ├── AIExplainer.tsx            # Optional AI result summary
-│       ├── Disclaimer.tsx             # Educational disclaimer
-│       └── PortfolioDemonstration.tsx # Summary of skills demonstrated
-├── package.json              # Project scripts and dependencies
-└── README.md                 # Project documentation
+│   ├── App.tsx                     # React application component
+│   ├── math_engine/               # Frontend API client and types
+│   └── components/                # React UI components
+├── package.json                    # Node dependencies and scripts
+└── README.md                       # Project documentation
 ```
 
 ---
 
-## How to Run
+## Running Locally
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+### 1. Setup Python Virtual Environment & Install Dependencies
 
-2. **Configure environment variables:**
-   Create a `.env` file in the root directory:
-   ```env
-   GEMINI_API_KEY="your-gemini-api-key"
-   PORT=3000
-   ```
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r backend/requirements.txt
+```
 
-3. **Start the application:**
-   ```bash
-   npm run dev
-   ```
+### 2. Configure Environment Variables
 
-4. **Open in browser:**
-   Navigate to `http://localhost:3000`.
+Create `.env` in root:
+```env
+GEMINI_API_KEY="your-gemini-api-key"
+PORT=3000
+PYTHON_PORT=8000
+```
+
+### 3. Start Development Server
+
+```bash
+npm install
+npm run dev
+```
+
+The Express server will automatically launch the Python FastAPI server on `http://127.0.0.1:8000` and proxy `/api/*` requests while serving the React frontend on `http://localhost:3000`.
 
 ---
 
-## What I Learned
+## Testing
 
-Building this project helped me understand:
+Run Python automated test suite with `pytest`:
 
-- How first-order differential equations can be applied to model real-world change over time.
-- How to connect formal calculus topics (separable equations, integrating factors, initial value problems) to computer simulations.
-- How numerical solvers (such as RK4) approximate analytical differential equation solutions.
-- How to separate deterministic mathematical engines from user interface and AI interpretation layers.
-- How to present technical mathematical concepts in simple, accessible language.
+```bash
+PYTHONPATH=. ./venv/bin/pytest backend/tests -v
+```
+
+### Verified Test Results (12 Passed):
+- `test_health_endpoint`: PASSED
+- `test_simulate_deterioration_endpoint`: PASSED
+- `test_simulate_supply_endpoint`: PASSED
+- `test_invalid_input_validation`: PASSED
+- `test_analytical_deterioration_decay`: PASSED
+- `test_deterioration_invalid_inputs`: PASSED
+- `test_half_life`: PASSED
+- `test_supply_model_k_zero_edge_case`: PASSED
+- `test_supply_model_equilibrium`: PASSED
+- `test_rk4_accuracy_against_analytical`: PASSED
+- `test_rk4_step_size_convergence`: PASSED
+- `test_scipy_solve_ivp_comparison`: PASSED
+
+---
+
+## Learning Outcomes
+
+This project demonstrates:
+- Translation of mathematical differential equations into Python solvers.
+- Implementation and error convergence verification of numerical methods (RK4 vs. SciPy `solve_ivp`).
+- RESTful API design using FastAPI and Pydantic.
+- Full-stack web integration connecting React/TypeScript frontends with Python calculation backends.
+- Safe AI architecture separating deterministic math solvers from natural language explanations.
 
 ---
 
 ## Limitations
 
-- The simulation uses simplified first-order differential equations.
-- Spoilage rate parameters ($k$) are illustrative and not based on official PNG agricultural statistics.
-- Real-world food loss depends on additional environmental variables such as humidity, airflow, mechanical impact, and bacterial load.
-- The output should be viewed as an educational demonstration rather than a real-world scientific prediction.
-
----
-
-## Future Improvements
-
-- Incorporate temperature and humidity as continuous dynamic variables.
-- Integrate validated real-world agricultural transport data from PNG highways.
-- Add multi-stage travel routes with varying conditions per leg.
-- Compare second-order or non-linear deterioration models.
+- Deterioration rates ($k$) are illustrative parameters designed for mathematical exploration.
+- Real-world food deterioration depends on microclimate fluctuations (temperature, humidity, ventilation, physical bruising).
+- Results should be interpreted as educational ODE simulations rather than field-validated predictions.
 
 ---
 
 ## Disclaimer
 
-> FreshFlow PNG is an educational Applied Mathematics project. The simulation uses simplified mathematical models and illustrative parameters. Results should not be treated as real-world predictions unless validated data and assumptions are used.
+> FreshFlow PNG V2 is an educational Applied Mathematics simulation. Parameters and outputs are illustrative unless supported by verified agricultural field data.

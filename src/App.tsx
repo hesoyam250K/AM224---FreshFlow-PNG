@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { TopBar } from './components/TopBar';
 import { HeroSection } from './components/HeroSection';
 import { SimpleQuestion } from './components/SimpleQuestion';
 import { SimulationControls } from './components/SimulationControls';
 import { ResultsDashboard } from './components/ResultsDashboard';
 import { MainGraph } from './components/MainGraph';
+import { ChartSection } from './components/ChartSection';
 import { ScenarioComparison } from './components/ScenarioComparison';
 import { ModelSuggestions } from './components/ModelSuggestions';
 import { MathExplanation } from './components/MathExplanation';
@@ -12,8 +13,8 @@ import { AIExplainer } from './components/AIExplainer';
 import { Disclaimer } from './components/Disclaimer';
 import { PortfolioDemonstration } from './components/PortfolioDemonstration';
 
-import { runSimulation } from './math_engine/odeModels';
-import { SimulationParams } from './math_engine/types';
+import { runSimulation, fetchSimulationResult } from './math_engine/odeModels';
+import { SimulationParams, SimulationResult } from './math_engine/types';
 
 export default function App() {
   const defaultParams: SimulationParams = {
@@ -28,10 +29,19 @@ export default function App() {
   };
 
   const [params, setParams] = useState<SimulationParams>(defaultParams);
+  const [simulationResult, setSimulationResult] = useState<SimulationResult>(() => runSimulation(defaultParams));
 
-  // Compute deterministic mathematical simulation result in real-time
-  const simulationResult = useMemo(() => {
-    return runSimulation(params);
+  // Fetch simulation results asynchronously from Python FastAPI Backend
+  useEffect(() => {
+    let isMounted = true;
+    fetchSimulationResult(params).then((res) => {
+      if (isMounted) {
+        setSimulationResult(res);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
   }, [params]);
 
   const scrollToSimulation = () => {
@@ -71,8 +81,8 @@ export default function App() {
         {/* Section 4: Results */}
         <ResultsDashboard result={simulationResult} />
 
-        {/* Section 5: Main Graph */}
-        <MainGraph result={simulationResult} />
+        {/* Section 5: Interactive Visualisations & Solver Comparisons */}
+        <ChartSection result={simulationResult} />
 
         {/* Section 6: What If Conditions Change? (Comparison Chart) */}
         <ScenarioComparison result={simulationResult} />
@@ -97,11 +107,11 @@ export default function App() {
       <footer className="bg-white border-t border-slate-200 py-6 px-4 sm:px-8 mt-12 text-slate-500 text-xs">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div>
-            <p className="font-semibold text-slate-800">FreshFlow PNG</p>
-            <p className="text-slate-500">Understanding how time and delays affect fresh food</p>
+            <p className="font-semibold text-slate-800">FreshFlow PNG V2</p>
+            <p className="text-slate-500">Python FastAPI Engine & Applied Mathematics ODE Simulation</p>
           </div>
-          <p className="text-[11px] text-slate-400">
-            Educational Applied Mathematics Simulation
+          <p className="text-[11px] text-slate-400 font-mono">
+            Backend: {simulationResult.engineUsed || 'Python FastAPI (NumPy/SciPy)'}
           </p>
         </div>
       </footer>

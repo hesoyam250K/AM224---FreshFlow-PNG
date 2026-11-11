@@ -5,9 +5,9 @@ export type ScenarioPresetId = 'normal_journey' | 'road_delay' | 'major_disrupti
 export interface ProduceTypeSpec {
   id: string;
   name: string;
-  localName?: string; // e.g. "Kaukau"
-  baseSpoilageRate: number; // k in hr^-1 under normal ambient storage (e.g. 0.015)
-  pricePerKgPGK: number; // Price in Papua New Guinea Kina per kg
+  localName?: string;
+  baseSpoilageRate: number;
+  pricePerKgPGK: number;
   description: string;
   iconName: string;
   optimalTempC: number;
@@ -20,46 +20,59 @@ export interface ScenarioPreset {
   transportHours: number;
   storageCondition: StorageCondition;
   spoilageMultiplier: number;
-  roadVibrationFactor: number; // k modifier due to road conditions
-  incomingSupplyRate: number; // S in kg/hr
+  roadVibrationFactor: number;
+  incomingSupplyRate: number;
   badgeText: string;
 }
 
 export interface SimulationParams {
   produceId: string;
-  initialQuantity: number; // Q0 in kg
-  transportHours: number; // t in hours
+  initialQuantity: number;
+  transportHours: number;
   storageCondition: StorageCondition;
-  customSpoilageRate?: number; // optional manual override for k
+  customSpoilageRate?: number;
   scenarioId: ScenarioPresetId;
-  incomingSupplyRate: number; // S for Model 2 (kg/hr)
-  enableModel2Supply: boolean; // toggle Model 2 (Supply + Spoilage)
-  enablePiecewiseConditions: boolean; // toggle Model 3 (Changing conditions k(t))
+  incomingSupplyRate: number;
+  enableModel2Supply: boolean;
+  enablePiecewiseConditions: boolean;
 }
 
 export interface TimeDataPoint {
   timeHours: number;
   analyticalUsableQty: number; // Q(t) exact
-  numericalUsableQty: number; // Q(t) RK4 approximation
+  numericalUsableQty: number; // Custom RK4 approximation
+  scipyUsableQty?: number; // SciPy solve_ivp RK45 solution
   lostQty: number;
-  spoilageRateK: number; // instantaneous k(t)
-  equilibriumQty?: number; // Q* = S/k
+  spoilageRateK: number;
+  equilibriumQty?: number;
+}
+
+export interface ErrorMetricsSpec {
+  maxAbsoluteErrorRk4: number;
+  maxAbsoluteErrorScipy: number;
+  meanAbsoluteErrorRk4: number;
+  meanAbsoluteErrorScipy: number;
+  stepSize: number;
 }
 
 export interface SimulationResult {
   params: SimulationParams;
   produce: ProduceTypeSpec;
   timeSeries: TimeDataPoint[];
-  startingQty: number; // Q0
-  remainingQty: number; // Q(t_final)
-  lostQty: number; // Q0 - Q(t_final)
-  percentageLoss: number; // (lostQty / Q0) * 100
-  effectiveK: number; // effective rate parameter hr^-1
-  halfLifeHours: number; // t_1/2 = ln(2) / k
+  startingQty: number;
+  remainingQty: number;
+  remainingQtyRk4?: number;
+  remainingQtyScipy?: number;
+  lostQty: number;
+  percentageLoss: number;
+  effectiveK: number;
+  halfLifeHours: number;
   estimatedValueLostPGK: number;
   estimatedValueRemainingPGK: number;
-  equilibriumQty: number; // S/k for Model 2
+  equilibriumQty: number;
   timeTo90PercentLossHours: number;
+  errorMetrics?: ErrorMetricsSpec;
+  engineUsed?: 'Python FastAPI (NumPy/SciPy)' | 'Client JS Fallback';
 }
 
 export interface SensitivityTrace {
