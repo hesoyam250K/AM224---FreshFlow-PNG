@@ -1,0 +1,6 @@
+{
+  "name": "FreshFlow PNG – Fresh Food Supply Chain ODE Simulation",
+  "description": "An interactive Applied Mathematics web application simulating fresh agricultural food loss and supply dynamics across Papua New Guinea supply chains using first-order differential equations (ODEs).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
