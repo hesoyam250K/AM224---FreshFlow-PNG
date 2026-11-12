@@ -210,7 +210,7 @@ export async function fetchSimulationResult(params: SimulationParams): Promise<S
             stepSize: data.error_metrics.step_size,
           }
         : undefined,
-      engineUsed: 'Node.js ODE Engine (NumPy/SciPy-grade RK4)',
+      engineUsed: data.engine || 'Python FastAPI (NumPy/SciPy)',
     };
   } catch (err) {
     console.warn('Backend request failed, falling back to local JS calculation:', err);

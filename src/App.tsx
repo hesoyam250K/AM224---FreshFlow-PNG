@@ -108,10 +108,10 @@ export default function App() {
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div>
             <p className="font-semibold text-slate-800">FreshFlow PNG V2</p>
-            <p className="text-slate-500">Applied Mathematics ODE Simulation Engine</p>
+            <p className="text-slate-500">Python FastAPI Engine & Applied Mathematics ODE Simulation</p>
           </div>
           <p className="text-[11px] text-slate-400 font-mono">
-            Backend: {simulationResult.engineUsed || 'Node.js ODE Engine (NumPy/SciPy-grade RK4)'}
+            Backend: {simulationResult.engineUsed || 'Python FastAPI (NumPy/SciPy)'}
           </p>
         </div>
       </footer>
