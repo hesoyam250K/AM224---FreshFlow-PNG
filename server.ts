@@ -114,7 +114,7 @@ STRICT RULES:
   if (apiKey) {
     try {
       const ai = new GoogleGenAI({ apiKey });
-      const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+      const model = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
       const aiResponse = await ai.models.generateContent({
         model,
         contents: prompt,

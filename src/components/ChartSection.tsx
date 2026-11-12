@@ -51,36 +51,36 @@ export const ChartSection: React.FC<ChartSectionProps> = ({ result }) => {
   });
 
   return (
-    <section className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-6 shadow-xs">
+    <section className="bg-[#131B2E] border border-slate-800/80 rounded-xl p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-xs">
       {/* Header and Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 font-heading">
+          <h2 className="text-lg sm:text-xl font-bold text-slate-100 font-heading">
             How the amount changes over time
           </h2>
-          <p className="text-xs text-slate-500 font-mono">
+          <p className="text-[11px] sm:text-xs text-slate-400 font-mono">
             Engine: {engineUsed || 'Python FastAPI (NumPy/SciPy)'}
           </p>
         </div>
 
         {/* Tab Controls */}
-        <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg border border-slate-200 overflow-x-auto">
+        <div className="flex flex-wrap items-center gap-1 p-1 bg-[#0B0F17] rounded-lg border border-slate-800 overflow-x-auto">
           <button
             onClick={() => setActiveTab('single')}
-            className={`px-3 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap cursor-pointer ${
+            className={`px-2.5 py-1.5 text-[11px] sm:text-xs font-semibold rounded transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'single'
-                ? 'bg-white text-slate-900 font-bold shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-slate-800 text-emerald-400 border border-slate-700 shadow-xs'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             Decay Curve & Solvers
           </button>
           <button
             onClick={() => setActiveTab('scenarios')}
-            className={`px-3 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap cursor-pointer ${
+            className={`px-2.5 py-1.5 text-[11px] sm:text-xs font-semibold rounded transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'scenarios'
-                ? 'bg-white text-slate-900 font-bold shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-slate-800 text-emerald-400 border border-slate-700 shadow-xs'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             Compare Scenarios
@@ -88,10 +88,10 @@ export const ChartSection: React.FC<ChartSectionProps> = ({ result }) => {
           {params.enableModel2Supply && (
             <button
               onClick={() => setActiveTab('supply')}
-              className={`px-3 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap cursor-pointer ${
+              className={`px-2.5 py-1.5 text-[11px] sm:text-xs font-semibold rounded transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === 'supply'
-                  ? 'bg-white text-slate-900 font-bold shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-slate-800 text-emerald-400 border border-slate-700 shadow-xs'
+                  : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               Supply Equilibrium
@@ -99,10 +99,10 @@ export const ChartSection: React.FC<ChartSectionProps> = ({ result }) => {
           )}
           <button
             onClick={() => setActiveTab('sensitivity')}
-            className={`px-3 py-1.5 text-xs font-medium rounded transition-colors whitespace-nowrap cursor-pointer ${
+            className={`px-2.5 py-1.5 text-[11px] sm:text-xs font-semibold rounded transition-colors whitespace-nowrap cursor-pointer ${
               activeTab === 'sensitivity'
-                ? 'bg-white text-slate-900 font-bold shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-slate-800 text-emerald-400 border border-slate-700 shadow-xs'
+                : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             Sensitivity (k)
@@ -113,28 +113,28 @@ export const ChartSection: React.FC<ChartSectionProps> = ({ result }) => {
       {/* GRAPH 1: Analytical vs Custom RK4 vs SciPy solve_ivp */}
       {activeTab === 'single' && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between text-xs text-slate-600 font-mono">
-            <span>Comparing: Analytical Exact Solution vs Custom RK4 vs SciPy solve_ivp</span>
-            <span>Initial $Q_0$ = {startingQty} kg</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-[11px] sm:text-xs text-slate-400 font-mono gap-1">
+            <span>Comparing: Analytical Exact vs Custom RK4 vs SciPy solve_ivp</span>
+            <span>Initial Q₀ = {startingQty} kg</span>
           </div>
 
-          <div className="h-72 sm:h-80 w-full">
+          <div className="h-64 sm:h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={timeSeries} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="timeHours" stroke="#64748b" tick={{ fill: '#475569', fontSize: 12 }} />
-                <YAxis stroke="#64748b" tick={{ fill: '#475569', fontSize: 12 }} domain={[0, Math.ceil(startingQty * 1.05)]} />
+              <LineChart data={timeSeries} margin={{ top: 10, right: 10, left: -15, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                <XAxis dataKey="timeHours" stroke="#475569" tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                <YAxis stroke="#475569" tick={{ fill: '#94a3b8', fontSize: 11 }} domain={[0, Math.ceil(startingQty * 1.05)]} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#cbd5e1', borderRadius: '0.5rem', color: '#0f172a' }}
+                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '0.5rem', color: '#f8fafc' }}
                   formatter={(val: any, name: any) => [`${Number(val).toFixed(2)} kg`, name]}
                   labelFormatter={(lbl) => `Time: ${lbl} Hours`}
                 />
-                <Legend verticalAlign="top" height={36} />
+                <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '11px', color: '#94a3b8' }} />
                 <Line
                   type="monotone"
                   dataKey="analyticalUsableQty"
                   name="Analytical Exact"
-                  stroke="#059669"
+                  stroke="#10b981"
                   strokeWidth={3}
                   dot={false}
                 />
@@ -142,7 +142,7 @@ export const ChartSection: React.FC<ChartSectionProps> = ({ result }) => {
                   type="monotone"
                   dataKey="numericalUsableQty"
                   name="Custom RK4 Solver"
-                  stroke="#0284c7"
+                  stroke="#38bdf8"
                   strokeWidth={2}
                   strokeDasharray="4 4"
                   dot={false}
@@ -151,7 +151,7 @@ export const ChartSection: React.FC<ChartSectionProps> = ({ result }) => {
                   type="monotone"
                   dataKey="scipyUsableQty"
                   name="SciPy solve_ivp"
-                  stroke="#7c3aed"
+                  stroke="#a78bfa"
                   strokeWidth={2}
                   strokeDasharray="2 2"
                   dot={false}
@@ -161,8 +161,8 @@ export const ChartSection: React.FC<ChartSectionProps> = ({ result }) => {
           </div>
 
           {errorMetrics && (
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs font-mono text-slate-700 flex flex-wrap items-center justify-between gap-2">
-              <span>Step Size $h$: {errorMetrics.stepSize} hr</span>
+            <div className="p-3 bg-[#0B0F17]/80 border border-slate-800 rounded-lg text-[11px] sm:text-xs font-mono text-slate-300 flex flex-wrap items-center justify-between gap-2">
+              <span>Step Size h: {errorMetrics.stepSize} hr</span>
               <span>Max RK4 Error: {errorMetrics.maxAbsoluteErrorRk4.toExponential(3)} kg</span>
               <span>Max SciPy Error: {errorMetrics.maxAbsoluteErrorScipy.toExponential(3)} kg</span>
             </div>
@@ -173,25 +173,25 @@ export const ChartSection: React.FC<ChartSectionProps> = ({ result }) => {
       {/* GRAPH 2: Scenario Comparison */}
       {activeTab === 'scenarios' && (
         <div className="space-y-4">
-          <div className="text-xs text-slate-600 font-mono">
+          <div className="text-[11px] sm:text-xs text-slate-400 font-mono">
             Multi-Scenario Transport Journey Curves
           </div>
-          <div className="h-72 sm:h-80 w-full">
+          <div className="h-64 sm:h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={scenarioChartData} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="timeHours" stroke="#64748b" tick={{ fill: '#475569', fontSize: 12 }} />
-                <YAxis stroke="#64748b" tick={{ fill: '#475569', fontSize: 12 }} />
+              <LineChart data={scenarioChartData} margin={{ top: 10, right: 10, left: -15, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                <XAxis dataKey="timeHours" stroke="#475569" tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                <YAxis stroke="#475569" tick={{ fill: '#94a3b8', fontSize: 11 }} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#cbd5e1', borderRadius: '0.5rem', color: '#0f172a' }}
+                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '0.5rem', color: '#f8fafc' }}
                   formatter={(val: any) => [`${Number(val).toFixed(1)} kg`]}
                   labelFormatter={(lbl) => `Time: ${lbl} Hours`}
                 />
-                <Legend verticalAlign="top" height={36} />
-                <Line type="monotone" dataKey="Normal journey" stroke="#059669" strokeWidth={2.5} dot={false} />
-                <Line type="monotone" dataKey="Delayed journey" stroke="#d97706" strokeWidth={2.5} dot={false} />
-                <Line type="monotone" dataKey="Long delay" stroke="#dc2626" strokeWidth={2.5} dot={false} />
-                <Line type="monotone" dataKey="Better storage" stroke="#0284c7" strokeWidth={2.5} dot={false} />
+                <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '11px', color: '#94a3b8' }} />
+                <Line type="monotone" dataKey="Normal journey" stroke="#10b981" strokeWidth={2.5} dot={false} />
+                <Line type="monotone" dataKey="Delayed journey" stroke="#fbbf24" strokeWidth={2.5} dot={false} />
+                <Line type="monotone" dataKey="Long delay" stroke="#f87171" strokeWidth={2.5} dot={false} />
+                <Line type="monotone" dataKey="Better storage" stroke="#38bdf8" strokeWidth={2.5} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -201,23 +201,23 @@ export const ChartSection: React.FC<ChartSectionProps> = ({ result }) => {
       {/* GRAPH 3: Supply Equilibrium */}
       {activeTab === 'supply' && params.enableModel2Supply && (
         <div className="space-y-4">
-          <div className="text-xs text-slate-600 font-mono">
+          <div className="text-[11px] sm:text-xs text-slate-400 font-mono">
             Supply Model Trajectory towards Equilibrium Q* = S/k = {equilibriumQty.toFixed(1)} kg
           </div>
-          <div className="h-72 sm:h-80 w-full">
+          <div className="h-64 sm:h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={timeSeries} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="timeHours" stroke="#64748b" tick={{ fill: '#475569', fontSize: 12 }} />
-                <YAxis stroke="#64748b" tick={{ fill: '#475569', fontSize: 12 }} />
+              <LineChart data={timeSeries} margin={{ top: 10, right: 10, left: -15, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                <XAxis dataKey="timeHours" stroke="#475569" tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                <YAxis stroke="#475569" tick={{ fill: '#94a3b8', fontSize: 11 }} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#cbd5e1', borderRadius: '0.5rem', color: '#0f172a' }}
+                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '0.5rem', color: '#f8fafc' }}
                   formatter={(val: any) => [`${Number(val).toFixed(1)} kg`]}
                   labelFormatter={(lbl) => `Time: ${lbl} Hours`}
                 />
-                <Legend verticalAlign="top" height={36} />
-                <ReferenceLine y={equilibriumQty} label={{ value: `Equilibrium Q* = ${equilibriumQty.toFixed(1)} kg`, fill: '#059669', position: 'insideTopRight' }} stroke="#059669" strokeDasharray="5 5" />
-                <Line type="monotone" dataKey="analyticalUsableQty" name="Quantity Q(t)" stroke="#0284c7" strokeWidth={3} dot={false} />
+                <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '11px', color: '#94a3b8' }} />
+                <ReferenceLine y={equilibriumQty} label={{ value: `Equilibrium Q* = ${equilibriumQty.toFixed(1)} kg`, fill: '#10b981', position: 'insideTopRight' }} stroke="#10b981" strokeDasharray="5 5" />
+                <Line type="monotone" dataKey="analyticalUsableQty" name="Quantity Q(t)" stroke="#38bdf8" strokeWidth={3} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -227,27 +227,27 @@ export const ChartSection: React.FC<ChartSectionProps> = ({ result }) => {
       {/* GRAPH 4: Sensitivity */}
       {activeTab === 'sensitivity' && (
         <div className="space-y-4">
-          <div className="text-xs text-slate-600 font-mono">
-            Rate Sensitivity Analysis across varying $k$ parameters
+          <div className="text-[11px] sm:text-xs text-slate-400 font-mono">
+            Rate Sensitivity Analysis across varying k parameters
           </div>
-          <div className="h-72 sm:h-80 w-full">
+          <div className="h-64 sm:h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={sensitivityChartData} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="timeHours" stroke="#64748b" tick={{ fill: '#475569', fontSize: 12 }} />
-                <YAxis stroke="#64748b" tick={{ fill: '#475569', fontSize: 12 }} />
+              <LineChart data={sensitivityChartData} margin={{ top: 10, right: 10, left: -15, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                <XAxis dataKey="timeHours" stroke="#475569" tick={{ fill: '#94a3b8', fontSize: 11 }} />
+                <YAxis stroke="#475569" tick={{ fill: '#94a3b8', fontSize: 11 }} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#cbd5e1', borderRadius: '0.5rem', color: '#0f172a' }}
+                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '0.5rem', color: '#f8fafc' }}
                   formatter={(val: any) => [`${Number(val).toFixed(1)} kg`]}
                   labelFormatter={(lbl) => `Time: ${lbl} Hours`}
                 />
-                <Legend verticalAlign="top" height={36} />
+                <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '11px', color: '#94a3b8' }} />
                 {sensitivityTraces.map((st, idx) => (
                   <Line
                     key={st.label}
                     type="monotone"
                     dataKey={st.label}
-                    stroke={idx === 0 ? '#0284c7' : idx === 1 ? '#059669' : '#dc2626'}
+                    stroke={idx === 0 ? '#38bdf8' : idx === 1 ? '#10b981' : '#f87171'}
                     strokeWidth={2.5}
                     dot={false}
                   />

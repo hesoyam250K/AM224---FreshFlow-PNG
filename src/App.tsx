@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TopBar } from './components/TopBar';
 import { HeroSection } from './components/HeroSection';
 import { SimpleQuestion } from './components/SimpleQuestion';
 import { SimulationControls } from './components/SimulationControls';
 import { ResultsDashboard } from './components/ResultsDashboard';
-import { MainGraph } from './components/MainGraph';
 import { ChartSection } from './components/ChartSection';
 import { ScenarioComparison } from './components/ScenarioComparison';
 import { ModelSuggestions } from './components/ModelSuggestions';
@@ -59,12 +58,12 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#0B0F17] text-slate-100 flex flex-col font-sans selection:bg-emerald-900/60 selection:text-emerald-200">
       {/* Top Bar Navigation */}
       <TopBar onTrySimulation={scrollToSimulation} />
 
       {/* Main Content Area */}
-      <main className="flex-grow max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+      <main className="flex-grow max-w-4xl mx-auto w-full px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8 space-y-6 sm:space-y-10">
         {/* Section 1: Hero & Plain English Explanation */}
         <HeroSection onTrySimulation={scrollToSimulation} />
 
@@ -93,7 +92,7 @@ export default function App() {
         {/* Section 8: The Maths Behind It (Expandable) */}
         <MathExplanation />
 
-        {/* Section 9: AI Feature (Optional and Simple) */}
+        {/* Section 9: AI Explanation Feature */}
         <AIExplainer result={simulationResult} />
 
         {/* Section 10: Important Disclaimer */}
@@ -104,11 +103,11 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-200 py-6 px-4 sm:px-8 mt-12 text-slate-500 text-xs">
+      <footer className="bg-[#0F172A]/80 border-t border-slate-800/80 py-6 px-4 sm:px-8 mt-12 text-slate-400 text-xs">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div>
-            <p className="font-semibold text-slate-800">FreshFlow PNG V2</p>
-            <p className="text-slate-500">Python FastAPI Engine & Applied Mathematics ODE Simulation</p>
+            <p className="font-semibold text-slate-200">FreshFlow PNG V2</p>
+            <p className="text-slate-400">Python FastAPI Engine & Applied Mathematics ODE Simulation</p>
           </div>
           <p className="text-[11px] text-slate-400 font-mono">
             Backend: {simulationResult.engineUsed || 'Python FastAPI (NumPy/SciPy)'}

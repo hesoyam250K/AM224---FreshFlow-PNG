@@ -36,34 +36,43 @@ export const AIExplainer: React.FC<AIExplainerProps> = ({ result }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate explanation');
+        let msg = data.detail || data.error || data.message;
+        if (response.status === 503 && (!msg || msg.includes('missing'))) {
+          msg = 'AI explanation service is not configured.';
+        } else if (response.status === 429) {
+          msg = 'Gemini API quota has been reached. Please try again later.';
+        } else if (!msg) {
+          msg = 'The explanation service is temporarily unavailable.';
+        }
+        throw new Error(msg);
       }
 
       setExplanation(data.explanation);
     } catch (err: any) {
       console.error('AI Explanation Error:', err);
-      setError(err.message || 'Could not load explanation at this time.');
+      setError(err.message || 'Unable to generate an explanation. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <section className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-4 shadow-xs">
+    <section className="bg-[#131B2E] border border-slate-800/80 rounded-xl p-4 sm:p-8 space-y-4 shadow-xs">
       <div className="space-y-1">
-        <h2 className="text-xl font-bold text-slate-900 font-heading">
-          Explain this result
+        <h2 className="text-lg sm:text-xl font-bold text-slate-100 font-heading">
+          Explain this result with AI
         </h2>
-        <p className="text-sm text-slate-600">
-          Get a short, plain-English summary of your simulation results.
+        <p className="text-xs sm:text-sm text-slate-400">
+          Get a short, plain-English summary of your simulation results generated from backend calculations.
         </p>
       </div>
 
       {!explanation && !loading && (
-        <div>
+        <div className="pt-2">
           <button
             onClick={fetchAIExplanation}
-            className="px-5 py-2.5 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-lg transition-colors cursor-pointer"
+            disabled={loading}
+            className="w-full sm:w-auto px-5 py-2.5 text-xs sm:text-sm font-bold text-slate-950 bg-emerald-500 hover:bg-emerald-400 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
           >
             Explain this result
           </button>
@@ -71,25 +80,34 @@ export const AIExplainer: React.FC<AIExplainerProps> = ({ result }) => {
       )}
 
       {loading && (
-        <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600">
-          Generating explanation...
+        <div className="p-4 bg-[#0B0F17]/80 border border-slate-800 rounded-lg text-xs sm:text-sm text-emerald-400 font-mono flex items-center gap-3">
+          <span className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin shrink-0" />
+          <span>Generating explanation from ODE simulation outputs...</span>
         </div>
       )}
 
       {error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 rounded-lg text-xs text-rose-800">
-          {error}
+        <div className="space-y-3 pt-2">
+          <div className="p-4 bg-rose-950/40 border border-rose-800/80 rounded-lg text-xs sm:text-sm text-rose-300">
+            {error}
+          </div>
+          <button
+            onClick={fetchAIExplanation}
+            className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors cursor-pointer"
+          >
+            Try again
+          </button>
         </div>
       )}
 
       {explanation && !loading && (
-        <div className="space-y-3">
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 leading-relaxed whitespace-pre-line">
+        <div className="space-y-3 pt-2">
+          <div className="p-4 sm:p-5 bg-[#0B0F17]/80 border border-slate-800 rounded-lg text-xs sm:text-sm text-slate-200 leading-relaxed whitespace-pre-line font-sans">
             {explanation}
           </div>
           <button
             onClick={fetchAIExplanation}
-            className="text-xs font-medium text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+            className="text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
           >
             Refresh explanation
           </button>

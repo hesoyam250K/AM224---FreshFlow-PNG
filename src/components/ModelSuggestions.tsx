@@ -6,7 +6,7 @@ interface ModelSuggestionsProps {
 }
 
 export const ModelSuggestions: React.FC<ModelSuggestionsProps> = ({ result }) => {
-  const { percentageLoss, params, lostQty, startingQty } = result;
+  const { percentageLoss, params } = result;
 
   const observations: string[] = [];
 
@@ -34,12 +34,12 @@ export const ModelSuggestions: React.FC<ModelSuggestionsProps> = ({ result }) =>
   }
 
   return (
-    <section className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-4 shadow-xs">
+    <section className="bg-[#131B2E] border border-slate-800/80 rounded-xl p-4 sm:p-8 space-y-4 shadow-xs">
       <div className="space-y-1">
-        <h2 className="text-xl font-bold text-slate-900 font-heading">
+        <h2 className="text-lg sm:text-xl font-bold text-slate-100 font-heading">
           What can we learn?
         </h2>
-        <p className="text-sm text-slate-600">
+        <p className="text-xs sm:text-sm text-slate-400">
           Simple observations based on your simulation results.
         </p>
       </div>
@@ -48,9 +48,9 @@ export const ModelSuggestions: React.FC<ModelSuggestionsProps> = ({ result }) =>
         {observations.map((obs, idx) => (
           <div
             key={idx}
-            className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 font-medium flex items-start gap-3"
+            className="p-3.5 sm:p-4 bg-[#0B0F17]/80 border border-slate-800 rounded-lg text-xs sm:text-sm text-slate-300 font-medium flex items-start gap-3"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-700 shrink-0 mt-1.5" />
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 mt-1.5" />
             <p className="leading-relaxed">{obs}</p>
           </div>
         ))}

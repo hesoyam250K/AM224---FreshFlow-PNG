@@ -32,32 +32,32 @@ export const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({ result }
   });
 
   return (
-    <section id="compare" className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-4 shadow-xs scroll-mt-20">
-      <div className="space-y-1">
-        <h2 className="text-xl font-bold text-slate-900 font-heading">
+    <section id="compare" className="bg-[#131B2E] border border-slate-800/80 rounded-xl p-4 sm:p-8 space-y-4 shadow-xs scroll-mt-20">
+      <div className="space-y-1.5">
+        <h2 className="text-lg sm:text-xl font-bold text-slate-100 font-heading">
           Compare different situations
         </h2>
-        <p className="text-sm font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 inline-block px-3 py-1 rounded-md">
+        <p className="text-xs sm:text-sm font-medium text-emerald-400 bg-emerald-950/50 border border-emerald-800/80 inline-block px-3 py-1 rounded-md">
           Longer delays can lead to greater losses in this model.
         </p>
       </div>
 
-      <div className="h-72 sm:h-80 w-full pt-4">
+      <div className="h-64 sm:h-80 w-full pt-2 sm:pt-4">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-            <XAxis dataKey="timeHours" stroke="#64748b" tick={{ fill: '#475569', fontSize: 12 }} />
-            <YAxis stroke="#64748b" tick={{ fill: '#475569', fontSize: 12 }} />
+          <LineChart data={chartData} margin={{ top: 10, right: 10, left: -15, bottom: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+            <XAxis dataKey="timeHours" stroke="#475569" tick={{ fill: '#94a3b8', fontSize: 11 }} />
+            <YAxis stroke="#475569" tick={{ fill: '#94a3b8', fontSize: 11 }} />
             <Tooltip
-              contentStyle={{ backgroundColor: '#ffffff', borderColor: '#cbd5e1', borderRadius: '0.5rem', color: '#0f172a' }}
+              contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '0.5rem', color: '#f8fafc' }}
               formatter={(val: any) => [`${Number(val).toFixed(1)} kg`]}
               labelFormatter={(lbl) => `${lbl} Hours`}
             />
-            <Legend verticalAlign="top" height={36} />
-            <Line type="monotone" dataKey="Normal journey" stroke="#059669" strokeWidth={2.5} dot={false} />
-            <Line type="monotone" dataKey="Delayed journey" stroke="#d97706" strokeWidth={2.5} dot={false} />
-            <Line type="monotone" dataKey="Long delay" stroke="#dc2626" strokeWidth={2.5} dot={false} />
-            <Line type="monotone" dataKey="Better storage" stroke="#0284c7" strokeWidth={2.5} dot={false} />
+            <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: '11px', color: '#94a3b8' }} />
+            <Line type="monotone" dataKey="Normal journey" stroke="#10b981" strokeWidth={2.5} dot={false} />
+            <Line type="monotone" dataKey="Delayed journey" stroke="#fbbf24" strokeWidth={2.5} dot={false} />
+            <Line type="monotone" dataKey="Long delay" stroke="#f87171" strokeWidth={2.5} dot={false} />
+            <Line type="monotone" dataKey="Better storage" stroke="#38bdf8" strokeWidth={2.5} dot={false} />
           </LineChart>
         </ResponsiveContainer>
       </div>
