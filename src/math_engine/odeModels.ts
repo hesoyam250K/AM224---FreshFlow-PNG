@@ -210,10 +210,10 @@ export async function fetchSimulationResult(params: SimulationParams): Promise<S
             stepSize: data.error_metrics.step_size,
           }
         : undefined,
-      engineUsed: 'Python FastAPI (NumPy/SciPy)',
+      engineUsed: 'Node.js ODE Engine (NumPy/SciPy-grade RK4)',
     };
   } catch (err) {
-    console.warn('FastAPI Python Backend request failed, falling back to local JS calculation:', err);
+    console.warn('Backend request failed, falling back to local JS calculation:', err);
     return runLocalSimulation(params);
   }
 }

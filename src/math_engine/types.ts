@@ -72,7 +72,7 @@ export interface SimulationResult {
   equilibriumQty: number;
   timeTo90PercentLossHours: number;
   errorMetrics?: ErrorMetricsSpec;
-  engineUsed?: 'Python FastAPI (NumPy/SciPy)' | 'Client JS Fallback';
+  engineUsed?: 'Node.js ODE Engine (NumPy/SciPy-grade RK4)' | 'Python FastAPI (NumPy/SciPy)' | 'Client JS Fallback' | string;
 }
 
 export interface SensitivityTrace {
